@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
         cityArrayAdapter = new CityArrayAdapter(this, cityArrayList);
         cityListView.setAdapter(cityArrayAdapter);
 
-     //   addDummyData();
+        //   addDummyData();
 
         // set listeners
         addCityButton.setOnClickListener(view -> {
@@ -75,14 +75,7 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
 
         deleteCityButton.setOnClickListener(view -> {
             if (selectedCity != null){
-                cityArrayList.remove(selectedCity);
-                cityArrayAdapter.notifyDataSetChanged();
-
-                // Remove from Firestore (using city name as document ID, same as addCity)
-                citiesRef.document(selectedCity.getName()).delete();
-
                 deleteCity(selectedCity);
-
                 // Clear selection
                 selectedCity = null;
             }
@@ -130,20 +123,11 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
     }
 
     public void deleteCity(City city){
-        db.collection("cities").document(city.toString())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
+        cityArrayList.remove(city);
+        cityArrayAdapter.notifyDataSetChanged();
+
+        DocumentReference docRef = citiesRef.document(city.getName());
+        docRef.delete();
     }
 
 }
