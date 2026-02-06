@@ -81,20 +81,7 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
                 // Remove from Firestore (using city name as document ID, same as addCity)
                 citiesRef.document(selectedCity.getName()).delete();
 
-                db.collection("cities").document(selectedCity.toString())
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error deleting document", e);
-                            }
-                        });
+                deleteCity(selectedCity);
 
                 // Clear selection
                 selectedCity = null;
@@ -130,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
         city.setProvince(year);
         cityArrayAdapter.notifyDataSetChanged();
 
-        // Updating the database using delete + addition
     }
 
     @Override
@@ -141,6 +127,23 @@ public class MainActivity extends AppCompatActivity implements CityDialogFragmen
         DocumentReference docRef = citiesRef.document(city.getName());
         docRef.set(city);
 
+    }
+
+    public void deleteCity(City city){
+        db.collection("cities").document(city.toString())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
 }
